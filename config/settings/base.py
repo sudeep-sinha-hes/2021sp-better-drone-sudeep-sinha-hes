@@ -65,6 +65,7 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    "rest_framework",
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -76,6 +77,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "better_drone.users.apps.UsersConfig",
     # Your stuff: custom apps go here
+    "data_pipeline.apps.DataPipelineConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
