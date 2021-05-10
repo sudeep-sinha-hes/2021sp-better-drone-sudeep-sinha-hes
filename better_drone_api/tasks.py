@@ -46,6 +46,7 @@ columns = [
     "number",
     "status",
     "event",
+    "deploy_to",
     "message",
     "before",
     "after",
