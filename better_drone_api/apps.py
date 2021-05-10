@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DataPipelineConfig(AppConfig):
+class BetterDroneAPIConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'data_pipeline'
+    name = 'better_drone_api'

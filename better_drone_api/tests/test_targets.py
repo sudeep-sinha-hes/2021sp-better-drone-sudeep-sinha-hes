@@ -1,8 +1,8 @@
 from django.test import TestCase as DjangoTestCase
 from datetime import date
 
-from data_pipeline.models import FetchJob, Repo
-from data_pipeline.targets import DateRangeTarget
+from better_drone_api.models import FetchJob, Repo
+from better_drone_api.targets import DateRangeTarget
 
 
 # Create your tests here.

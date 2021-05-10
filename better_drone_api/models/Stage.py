@@ -9,7 +9,7 @@ class Stage(models.Model):
     class Meta:
         db_table = 'stages'
 
-    app_label = 'better_drone'
+    app_label = 'better_drone_api'
 
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     build = models.ForeignKey(Build, on_delete=models.CASCADE)

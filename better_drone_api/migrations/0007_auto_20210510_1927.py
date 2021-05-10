@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data_pipeline', '0006_alter_stage_stage_id'),
+        ('better_drone_api', '0006_alter_stage_stage_id'),
     ]
 
     operations = [

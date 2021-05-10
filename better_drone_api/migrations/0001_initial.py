@@ -57,8 +57,8 @@ class Migration(migrations.Migration):
                 ('stopped', models.DateTimeField()),
                 ('on_success', models.BooleanField()),
                 ('on_failure', models.BooleanField()),
-                ('build', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_pipeline.build')),
-                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_pipeline.repo')),
+                ('build', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='better_drone_api.build')),
+                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='better_drone_api.repo')),
             ],
             options={
                 'db_table': 'stages',
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                 ('exit_code', models.IntegerField()),
                 ('started', models.IntegerField()),
                 ('stopped', models.IntegerField()),
-                ('stage', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_pipeline.stage')),
+                ('stage', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='better_drone_api.stage')),
             ],
             options={
                 'db_table': 'steps',
@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
                 ('fetched', models.BooleanField(default=False)),
-                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_pipeline.repo')),
+                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='better_drone_api.repo')),
             ],
             options={
                 'db_table': 'fetch_jobs',
@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=30)),
                 ('regexp', models.CharField(max_length=100)),
-                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_pipeline.repo')),
+                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='better_drone_api.repo')),
             ],
             options={
                 'db_table': 'failure_categories',
@@ -108,6 +108,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='build',
             name='repo',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='data_pipeline.repo'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='better_drone_api.repo'),
         ),
     ]

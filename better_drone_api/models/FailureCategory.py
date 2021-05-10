@@ -7,7 +7,7 @@ class FailureCategory(models.Model):
     class Meta:
         db_table = 'failure_categories'
 
-    app_label = 'better_drone'
+    app_label = 'better_drone_api'
 
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     name = models.CharField(

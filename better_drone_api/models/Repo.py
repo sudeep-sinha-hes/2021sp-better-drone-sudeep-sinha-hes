@@ -5,7 +5,7 @@ class Repo(models.Model):
     class Meta:
         db_table = 'repos'
 
-    app_label = 'better_drone'
+    app_label = 'better_drone_api'
     namespace = models.CharField(
         max_length=50
     )

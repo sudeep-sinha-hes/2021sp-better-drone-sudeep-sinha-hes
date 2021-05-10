@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data_pipeline', '0002_fetchjob_fetching'),
+        ('better_drone_api', '0002_fetchjob_fetching'),
     ]
 
     operations = [

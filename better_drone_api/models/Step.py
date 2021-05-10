@@ -8,7 +8,7 @@ class Step(models.Model):
     class Meta:
         db_table = 'steps'
 
-    app_label = 'better_drone'
+    app_label = 'better_drone_api'
 
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     step_id = models.IntegerField()

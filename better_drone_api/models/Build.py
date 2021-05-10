@@ -12,7 +12,7 @@ class Build(models.Model):
         def get_all_completed(self):
             return super().get_queryset().exclude(status='pending')
 
-    app_label = 'better_drone'
+    app_label = 'better_drone_api'
 
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     build_id = models.IntegerField(unique=True)
