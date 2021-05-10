@@ -1,0 +1,6 @@
+data
+htmlcov
+__pycache__
+.env
+.coverage
+.idea
