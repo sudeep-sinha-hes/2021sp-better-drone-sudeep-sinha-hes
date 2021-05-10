@@ -19,9 +19,10 @@ class Step(models.Model):
         max_length=7,
         choices=[(c.name, c.value) for c in BuildStatus]
     )
+    errignore = models.BooleanField(default=False)
     exit_code = models.IntegerField()
-    started = models.IntegerField()
-    stopped = models.IntegerField()
+    started = models.DateTimeField()
+    stopped = models.DateTimeField()
 
     def __str__(self):
         return self.name

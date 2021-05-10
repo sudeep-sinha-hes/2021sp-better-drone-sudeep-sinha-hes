@@ -13,6 +13,7 @@ class Stage(models.Model):
 
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
     build = models.ForeignKey(Build, on_delete=models.CASCADE)
+    stage_id = models.IntegerField(unique=True)
     name = models.CharField(
         max_length=100
     )
@@ -26,7 +27,6 @@ class Stage(models.Model):
         max_length=7,
         choices=[(c.name, c.value) for c in BuildStatus]
     )
-    ignore_error = models.BooleanField()
     started = models.DateTimeField()
     stopped = models.DateTimeField()
     on_success = models.BooleanField()

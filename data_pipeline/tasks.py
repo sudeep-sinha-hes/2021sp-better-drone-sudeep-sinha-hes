@@ -1,26 +1,23 @@
 import os
 import pandas as pd
 import requests
-import json
 
 from dask import delayed, compute, dataframe as ddf
-from luigi import Task, ExternalTask, Parameter, LocalTarget
+from luigi import Task, ExternalTask, Parameter
 
-from csci_utils.luigi.task import TargetOutput, Requires, Requirement
-from csci_utils.luigi.dask.target import ParquetTarget, CSVTarget
+from csci_utils.luigi.task import Requires, Requirement
+from csci_utils.luigi.dask.target import CSVTarget
 
-from .targets import DateRangeTarget
+from .targets import DateRangeTarget, StoreBuildsTarget
+
+
+def get_base_output_path():
+    return os.path.join(os.getcwd(), os.environ.get('BASE_OUTPUT_PATH', 'data'))
 
 
 class DateRange(ExternalTask):
     def output(self):
-        return DateRangeTarget(
-            host=os.environ.get('DB_HOST', default='127.0.0.1'),
-            port=os.environ.get('DB_PORT', default='5432'),
-            database='bdrone',
-            user=os.environ.get('DB_USER_NAME', default='bdrone'),
-            password=os.environ.get('DB_PASSWD', default='bdrone')
-        )
+        return DateRangeTarget()
 
 
 class BaseBDroneTask(Task):
@@ -43,29 +40,31 @@ class BaseBDroneTask(Task):
         raise NotImplementedError()
 
 
+columns = [
+    "id",
+    "repo_id",
+    "number",
+    "status",
+    "event",
+    "message",
+    "before",
+    "after",
+    "ref",
+    "target",
+    "author_email",
+    "started",
+    "finished",
+]
+
+
 class FetchBuilds(BaseBDroneTask):
     requires = Requires()
     date_range = Requirement(DateRange)
     timestamp = Parameter()
 
-    columns = [
-        "repo_id",
-        "number",
-        "status",
-        "event",
-        "message",
-        "before",
-        "after",
-        "ref",
-        "target",
-        "author_email",
-        "started",
-        "finished",
-    ]
-
     def __init__(self, timestamp):
         super(FetchBuilds, self).__init__(timestamp)
-        self.output_path = os.path.join(os.getcwd(), "data", timestamp, "builds")
+        self.output_path = os.path.join(get_base_output_path(), timestamp, "builds")
 
     @delayed
     def fetch_data(self, repo, repo_id, start_date):
@@ -81,7 +80,7 @@ class FetchBuilds(BaseBDroneTask):
             )
 
             if len(resp_json) > 0:
-                dfs.append(ddf.from_pandas(pd.DataFrame(resp_json, columns=self.columns), npartitions=1))
+                dfs.append(ddf.from_pandas(pd.DataFrame(resp_json, columns=columns), npartitions=1))
 
                 if resp_json[:-1][0]["started"] < int(start_date.strftime('%s')):
                     break
@@ -99,24 +98,14 @@ class FetchBuilds(BaseBDroneTask):
     def run(self):
         print("########## Fetching Builds ############")
         date_range = self.input()["date_range"].get_date_range()
-        df = pd.DataFrame(date_range)
+        self.input()["date_range"].mark_fetching()
 
-        df.columns = df.iloc[0]
-        df = df[1:]
-
-        s = df.groupby(['repo', 'repo_id']).agg({'start_date': ['min']})
-        s.columns = s.columns.droplevel(1)
-
-        print(s)
-        targets = []
-
-        for dfi in s.index:
-            start_date = s.loc[dfi, :]['start_date']
-            fetch_tasks = self.fetch_data(dfi[0], dfi[1], start_date)
-            targets.append(fetch_tasks)
+        targets = [
+            self.fetch_data(dr["repo"], dr["repo_id"], dr["start_date"])
+            for dr in date_range
+        ]
 
         dfs = ddf.concat([*compute(*targets)], axis=0)
-
         self.output().write_dask(dfs)
 
     def output(self):
@@ -134,12 +123,14 @@ class FetchBuildDetails(BaseBDroneTask):
     @delayed
     def fetch_build_details(self, repo, build_id, repo_id):
         resp_json = self.get_result(f"{repo}/builds/{build_id}")
-        df = pd.DataFrame(resp_json, columns=resp_json.keys())
+        df = pd.DataFrame(resp_json, columns=[*columns, 'stages'])
+        df['repo_id'] = repo_id
+
         return ddf.from_pandas(df, npartitions=1)
 
     def __init__(self, timestamp):
         super(FetchBuildDetails, self).__init__(timestamp)
-        self.output_path = os.path.join(os.getcwd(), "data", timestamp, "details")
+        self.output_path = os.path.join(get_base_output_path(), timestamp, "details")
 
     def run(self):
         print("########## Fetching Build Details ############")
@@ -148,10 +139,30 @@ class FetchBuildDetails(BaseBDroneTask):
                        .apply(lambda r: self.fetch_build_details(r["repo_name"], r["number"], r["repo_id"]), axis=1)
                        .compute())
 
-        dfs = ddf.concat([*compute(*fetches)], axis=0)
+        dfs = ddf.concat([*compute(*fetches)], axis=0)\
+            .set_index('number')\
+            .map_partitions(lambda x: x.sort_index())
+
         self.output().write_dask(dfs)
 
     def output(self):
         return CSVTarget(
-            path=self.output_path + os.path.sep
+            path=self.output_path + os.path.sep,
+            glob="*.part"
         )
+
+
+class StoreBuilds(Task):
+    requires = Requires()
+    details = Requirement(FetchBuildDetails)
+    timestamp = Parameter()
+
+    def run(self):
+        df = self.input()['details'].read_dask()
+        df.set_index('number')
+        df = df.map_partitions(lambda x: x.sort_index())
+        self.output().insert_data(df)
+        self.output().mark_fetched()
+
+    def output(self):
+        return StoreBuildsTarget()

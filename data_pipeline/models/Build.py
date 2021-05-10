@@ -15,7 +15,7 @@ class Build(models.Model):
     app_label = 'better_drone'
 
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
-    build_id = models.IntegerField()
+    build_id = models.IntegerField(unique=True)
     status = models.CharField(
         max_length=7,
         choices=[(c.name, c.value) for c in BuildStatus]

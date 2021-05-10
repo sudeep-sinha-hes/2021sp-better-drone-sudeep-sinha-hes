@@ -13,3 +13,4 @@ class FetchJob(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     fetched = models.BooleanField(default=False)
+    fetching = models.BooleanField(default=False)
