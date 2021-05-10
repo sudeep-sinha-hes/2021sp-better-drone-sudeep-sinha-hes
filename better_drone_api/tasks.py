@@ -81,7 +81,8 @@ class FetchBuilds(BaseBDroneTask):
             )
 
             if len(resp_json) > 0:
-                dfs.append(ddf.from_pandas(pd.DataFrame(resp_json, columns=columns), npartitions=1))
+                pd_df = pd.DataFrame(resp_json, columns=columns).fillna('None')
+                dfs.append(ddf.from_pandas(pd_df, npartitions=1))
 
                 if resp_json[:-1][0]["started"] < int(start_date.strftime('%s')):
                     break
@@ -124,7 +125,7 @@ class FetchBuildDetails(BaseBDroneTask):
     @delayed
     def fetch_build_details(self, repo, build_id, repo_id):
         resp_json = self.get_result(f"{repo}/builds/{build_id}")
-        df = pd.DataFrame(resp_json, columns=[*columns, 'stages'])
+        df = pd.DataFrame(resp_json, columns=[*columns, 'stages']).fillna('None')
         df['repo_id'] = repo_id
 
         return ddf.from_pandas(df, npartitions=1)
