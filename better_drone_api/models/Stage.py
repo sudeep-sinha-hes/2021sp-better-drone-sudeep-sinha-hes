@@ -12,7 +12,7 @@ class Stage(models.Model):
     app_label = 'better_drone_api'
 
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
-    build = models.ForeignKey(Build, on_delete=models.CASCADE)
+    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name="stages", related_query_name="stage")
     stage_id = models.IntegerField(unique=True)
     name = models.CharField(
         max_length=100

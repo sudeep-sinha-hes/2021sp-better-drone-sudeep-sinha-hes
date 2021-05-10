@@ -10,7 +10,7 @@ class Step(models.Model):
 
     app_label = 'better_drone_api'
 
-    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE, related_name="steps", related_query_name="step")
     step_id = models.IntegerField()
     name = models.CharField(
         max_length=100
