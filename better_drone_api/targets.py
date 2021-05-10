@@ -68,6 +68,7 @@ def insert_build(build_id, data):
         'author_email',
         'started',
         'finished',
+        'deploy_to',
     ], {
         'build_id': lambda d: build_id,
         'started': lambda d: datetime.fromtimestamp(int(extract_set_val(d, "started"))),

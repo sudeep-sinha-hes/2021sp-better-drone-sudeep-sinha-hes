@@ -23,6 +23,9 @@ class Build(models.Model):
     event = models.CharField(
         max_length=20
     )
+    deploy_to = models.CharField(
+        max_length=50
+    )
     message = models.CharField(
         max_length=50
     )
