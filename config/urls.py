@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -16,6 +17,11 @@ urlpatterns = [
     path("users/", include("better_drone.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path(
+      "api/",
+      include(("better_drone_api.urls", "better_drone_api"), namespace="better_drone_api"),
+    ),
+    path("docs/", include_docs_urls(title="Better Drone API")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
