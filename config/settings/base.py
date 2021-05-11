@@ -66,7 +66,7 @@ DJANGO_APPS = [
     "django.contrib.admin",
     "django.forms",
     "rest_framework",
-    "corsheaders"
+    "corsheaders",
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",

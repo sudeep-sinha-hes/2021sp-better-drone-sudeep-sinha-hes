@@ -3,10 +3,11 @@ import { Helmet } from "react-helmet";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 
 // components
-import PageTitle from "../components/PageTitle";
+import PageTitle from '../../components/PageTitle';
 
 // constants
-import { APP_TITLE, PAGE_TITLE_HOME } from "../utils/constants";
+import { APP_TITLE, PAGE_TITLE_HOME } from "../../utils/constants";
+import BuildTable from "./components/BuildTable";
 
 // define css-in-js
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flex: 1,
       display: "flex",
-      flexDirection: "row",
+      flexDirection: "column",
       justifyContent: "space-between",
     },
   })
@@ -30,7 +31,7 @@ const Home: FC<{}> = (): ReactElement => {
         </title>
       </Helmet>
       <div className={classes.root}>
-        <PageTitle title={PAGE_TITLE_HOME} />
+        <BuildTable repoId={1}/>
       </div>
     </>
   );
