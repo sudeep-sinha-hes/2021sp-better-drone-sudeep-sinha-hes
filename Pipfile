@@ -21,6 +21,7 @@ django-allauth = "*"
 django-crispy-forms = "*"
 django-extensions = "*"
 coreapi = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.8"
