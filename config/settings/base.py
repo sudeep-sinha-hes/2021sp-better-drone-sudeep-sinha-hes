@@ -65,6 +65,8 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    "rest_framework",
+    "corsheaders"
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -76,6 +78,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "better_drone.users.apps.UsersConfig",
     # Your stuff: custom apps go here
+    "better_drone_api.apps.BetterDroneAPIConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -126,6 +129,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -270,3 +274,11 @@ SOCIALACCOUNT_ADAPTER = "better_drone.users.adapters.SocialAccountAdapter"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20
+}
+
+CORS_ALLOWED_ORIGINS = [
+    env.str("CORS_ALLOWED_ORIGIN", default="http://localhost:3000")
+]
